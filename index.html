@@ -202,7 +202,8 @@
         <option value="juli">Juli 2025</option>
         <option value="agustus">Agustus 2025</option>
         <option value="september">September 2025</option>
-        <option value="oktober">Oktober 2025</option> </select>
+        <option value="oktober">Oktober 2025</option>
+      </select>
     </div>
     <p id="todayDate" class="text-sm mt-2 opacity-80"></p>
   </header>
@@ -333,7 +334,7 @@
     juli:  'https://script.google.com/macros/s/AKfycbzxi0ObtvJVuLJoSQwMrGHCWpnZeyPpwLD5fk8k9CCNJyCqS2m007l0mzgaDn9P3ilW/exec',
     agustus: 'https://script.google.com/macros/s/AKfycbx6-6futXmN2zM8qzIDiGUll_ShEYedkFUc_q-SodbtzghIT3xRiYwm5a3eRCvUor8r0g/exec',
     september: 'https://script.google.com/macros/s/AKfycbz8STQxgLZWJCxpVgc46CFivzlKXlPRn3T2QcWamZ8GEY0dUJr2v4jDq78csiD9goZc/exec',
-    oktober: 'https://script.google.com/macros/s/AKfycbzMjq1OdGnQA8DevTAG7U2aGXkvYUKH-8o1dczTuWIaXn3W6NuXzsakapevzgk5My4LnA/exec' // TAMBAHAN
+    oktober: 'https://script.google.com/macros/s/AKfycbzMjq1OdGnQA8DevTAG7U2aGXkvYUKH-8o1dczTuWIaXn3W6NuXzsakapevzgk5My4LnA/exec'
   };
 
   const bulanLabel = {
@@ -343,7 +344,7 @@
     juli: "JULI 2025",
     agustus: "AGUSTUS 2025",
     september: "SEPTEMBER 2025",
-    oktober: "OKTOBER 2025" // TAMBAHAN
+    oktober: "OKTOBER 2025"
   };
 
   // Tanggal hari ini
@@ -414,6 +415,20 @@
       .then(data => {
         document.body.removeChild(loadingIndicator);
         globalData = data;
+
+        // --- MODIFIKASI: HAPUS JOGJA JIKA BULAN OKTOBER ---
+        if (currentBulan === 'oktober') {
+          if (globalData.branches) {
+            globalData.branches = globalData.branches.filter(branch => branch.cabang !== 'JOGJA');
+          }
+          if (globalData.cabangList) {
+            globalData.cabangList = globalData.cabangList.filter(cabang => cabang !== 'JOGJA');
+          }
+          if (globalData.sumberPerCabang && globalData.sumberPerCabang.JOGJA) {
+            delete globalData.sumberPerCabang.JOGJA;
+          }
+        }
+        // --- AKHIR MODIFIKASI ---
 
         // --- PERBAIKAN: Hitung ulang total untuk "Semua Cabang" di sisi klien ---
         // Ini untuk memastikan data "Semua Cabang" di chart adalah total yang benar,
@@ -635,7 +650,7 @@
     } else if(sumber !== 'all') {
       let idx = sumberOrder.indexOf(sumber.toUpperCase());
       labels = globalData.cabangList;
-      dataArr = globalData.sumberTabel[idx] ? globalData.cabangList.map(c => globalData.sumberTabel[idx][c]) : [];
+      dataArr = globalData.sumberTabel[idx] ? globalData.cabangList.map(c => globalData.sumberTabel[idx][c] || 0) : [];
       colorsArr = Array(labels.length).fill(sumberColorArr[idx]);
       chartType = 'bar';
     }
@@ -659,6 +674,7 @@
           formatter: function(value, context) { 
             if (chartType === 'doughnut') {
               const sum = context.dataset.data.reduce((a, b) => a + b, 0);
+              if (sum === 0) return '';
               const percentage = (value / sum * 100).toFixed(1) + '%';
               return value > 0 ? percentage : '';
             }
@@ -675,6 +691,7 @@
             label: function(context) {
               if (chartType === 'doughnut') {
                 const sum = context.dataset.data.reduce((a, b) => a + b, 0);
+                if (sum === 0) return ` ${context.label}: 0`;
                 const percentage = (context.parsed / sum * 100).toFixed(1) + '%';
                 return ` ${context.label}: ${context.parsed} (${percentage})`;
               }
@@ -739,7 +756,7 @@
     const theadRow = table.querySelector('thead tr');
     const tbody = table.querySelector('tbody');
 
-    // Buat header dinamis agar semua cabang (termasuk Jogja) muncul
+    // Buat header dinamis agar semua cabang muncul
     let headerHtml = '<th>Sumber</th>';
     cabangList.forEach(cabang => {
       const displayName = cabang.charAt(0).toUpperCase() + cabang.slice(1).toLowerCase();
