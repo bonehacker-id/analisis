@@ -51,6 +51,8 @@
       color:var(--text-color);
     }
     .scroll-container{ overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0.5rem 0; border-radius:8px; }
+    .sumber-summary { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px; }
+    .sumber-chip { padding:8px 10px; border-radius:999px; background:#f3f4f6; font-weight:600; font-size:0.9rem; }
     @media (max-width:640px){
       .metrics-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
       .contrast-table th, .contrast-table td{ font-size:0.8rem; padding:0.35rem 0.45rem; }
@@ -135,6 +137,9 @@
       <div style="position:relative;height:320px;">
         <canvas id="chartSumber"></canvas>
       </div>
+
+      <!-- ringkasan jumlah per sumber (angka total) -->
+      <div id="sumberSummary" class="sumber-summary" aria-live="polite"></div>
     </section>
 
     <section class="card mb-8 p-5">
@@ -182,7 +187,8 @@
       agustus: 'https://script.google.com/macros/s/AKfycbx6-6futXmN2zM8qzIDiGUll_ShEYedkFUc_q-SodbtzghIT3xRiYwm5a3eRCvUor8r0g/exec',
       september: 'https://script.google.com/macros/s/AKfycbz8STQxgLZWJCxpVgc46CFivzlKXlPRn3T2QcWamZ8GEY0dUJr2v4jDq78csiD9goZc/exec',
       oktober: 'https://script.google.com/macros/s/AKfycbzMjq1OdGnQA8DevTAG7U2aGXkvYUKH-8o1dczTuWIaXn3W6NuXzsakapevzgk5My4LnA/exec',
-      november: 'https://script.google.com/macros/s/AKfycbxA_SeDbvWGOv63Mq_ytC7S5Q9wsqbshdB7OLUIt5n2gF-H2b-u6lERYFMY-e01RxePCw/exec'
+      // <-- updated november API (you provided this)
+      november: 'https://script.google.com/macros/s/AKfycbwTs23x2rA6TJ4cXAduWv74QY1a77a2APb8DMc3kz-smGQ0ME-BRhS9SRDxn72E_bnT/exec'
     };
 
     const bulanLabel = {
@@ -265,17 +271,12 @@
           globalData.sumberPerCabang = globalData.sumberPerCabang || {};
           globalData.sumberTabel = globalData.sumberTabel || [];
 
-          // HAPUS JOGJA khusus oktober
+          // NOTE: removed automatic removal of PEKALONGAN for November.
+          // Keep JOGJA removal for Oktober only if still desired:
           if (currentBulan === 'oktober') {
             globalData.branches = globalData.branches.filter(b => b.cabang !== 'JOGJA');
             globalData.cabangList = globalData.cabangList.filter(c => c !== 'JOGJA');
             if (globalData.sumberPerCabang && globalData.sumberPerCabang.JOGJA) delete globalData.sumberPerCabang.JOGJA;
-          }
-          // HAPUS PEKALONGAN khusus november
-          if (currentBulan === 'november') {
-            globalData.branches = globalData.branches.filter(b => b.cabang !== 'PEKALONGAN');
-            globalData.cabangList = globalData.cabangList.filter(c => c !== 'PEKALONGAN');
-            if (globalData.sumberPerCabang && globalData.sumberPerCabang.PEKALONGAN) delete globalData.sumberPerCabang.PEKALONGAN;
           }
 
           // Rekalkulasi sumber total (semua cabang)
@@ -347,18 +348,33 @@
       if (!table) return;
       const theadRow = table.querySelector('thead tr');
       const tbody = table.querySelector('tbody');
+
+      // header: Sumber + cabang + Total
       let headerHtml = '<th>Sumber</th>';
       cabangList.forEach(cabang => {
         const display = (cabang && cabang.length) ? (cabang.charAt(0) + cabang.slice(1).toLowerCase()) : cabang;
         headerHtml += `<th data-sort="number" class="sortable">${display}</th>`;
       });
+      headerHtml += `<th data-sort="number" class="sortable">Total</th>`;
       theadRow.innerHTML = headerHtml;
-      tbody.innerHTML = (sumberTabel || []).map((row, idx) => `
+
+      // rows
+      tbody.innerHTML = (sumberTabel || []).map((row, idx) => {
+        // calculate total for this sumber across cabangList
+        let sum = 0;
+        const cells = (cabangList || []).map(c => {
+          const val = Number(row[c] || 0);
+          sum += val;
+          return `<td class="px-2 py-1 text-center">${val}</td>`;
+        }).join('');
+        return `
         <tr>
           <td class="px-2 py-1 font-bold text-center" style="color:${sumberColorArr[idx] || '#000'}">${row.sumber ?? 'Sumber'}</td>
-          ${cabangList.map(c => `<td class="px-2 py-1 text-center">${row[c] ?? 0}</td>`).join('')}
+          ${cells}
+          <td class="px-2 py-1 text-center font-semibold">${sum}</td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // Setup dropdowns for sumber chart AND trigger initial draw AFTER populate
@@ -402,8 +418,24 @@
         updateChartSumber(ddCabang.value, ddJenis.value);
       };
 
-      // <-- IMPORTANT: trigger chart AFTER dropdown terisi
+      // <-- trigger chart AFTER dropdown terisi
       updateChartSumber('all','all');
+    }
+
+    function updateSumberSummary() {
+      const container = document.getElementById('sumberSummary');
+      if (!globalData || !container) return;
+      container.innerHTML = '';
+      const labels = globalData.sumberLabels || [];
+      const totals = globalData.sumberList || [];
+      for (let i = 0; i < labels.length; i++) {
+        const label = labels[i] || ('Sumber ' + (i+1));
+        const val = totals[i] || 0;
+        const el = document.createElement('div');
+        el.className = 'sumber-chip';
+        el.textContent = `${label}: ${val}`;
+        container.appendChild(el);
+      }
     }
 
     function updateChartCabang(type='total'){
@@ -461,7 +493,6 @@
         type = 'doughnut';
       } else if (cabang !== 'all' && sumber === 'all') {
         labels = globalData.sumberLabels || [];
-        // API cabang keys are uppercase per your confirmation
         const arr = globalData.sumberPerCabang[cabang] || globalData.sumberPerCabang[cabang.toUpperCase()] || [];
         dataArr = (arr || []).map(n => Number(n) || 0);
         bg = sumberColorArr.slice(0, labels.length);
@@ -519,6 +550,9 @@
         },
         plugins:[ChartDataLabels]
       });
+
+      // update sumber summary (chips)
+      updateSumberSummary();
     }
 
     function addTableSorting(tableId, allowSortFirstCol=false){
