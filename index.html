@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Analisis All Cabang Bone Hacker</title>
 
-  <!-- Tailwind (utility classes) -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
 
-  <!-- Chart.js + datalabels -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
@@ -64,7 +62,7 @@
   <main class="container mx-auto px-4 py-6 max-w-7xl">
     <header class="mb-6 text-center">
       <h1 class="text-3xl font-extrabold mb-2">Analisis All Cabang</h1>
-      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">MEI 2025</span></p>
+      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">JANUARI 2026</span></p>
 
       <div class="flex flex-wrap justify-center items-center gap-3 mb-3">
         <label class="font-bold text-lg" for="bulanPicker">Pilih Bulan:</label>
@@ -78,6 +76,7 @@
           <option value="oktober">Oktober 2025</option>
           <option value="november">November 2025</option>
           <option value="desember">Desember 2025</option>
+          <option value="januari" selected>Januari 2026</option>
         </select>
       </div>
 
@@ -139,7 +138,6 @@
         <canvas id="chartSumber"></canvas>
       </div>
 
-      <!-- ringkasan jumlah per sumber (angka total) -->
       <div id="sumberSummary" class="sumber-summary" aria-live="polite"></div>
     </section>
 
@@ -188,9 +186,10 @@
       agustus: 'https://script.google.com/macros/s/AKfycbx6-6futXmN2zM8qzIDiGUll_ShEYedkFUc_q-SodbtzghIT3xRiYwm5a3eRCvUor8r0g/exec',
       september: 'https://script.google.com/macros/s/AKfycbz8STQxgLZWJCxpVgc46CFivzlKXlPRn3T2QcWamZ8GEY0dUJr2v4jDq78csiD9goZc/exec',
       oktober: 'https://script.google.com/macros/s/AKfycbzMjq1OdGnQA8DevTAG7U2aGXkvYUKH-8o1dczTuWIaXn3W6NuXzsakapevzgk5My4LnA/exec',
-      // <-- updated november API (you provided this)
       november: 'https://script.google.com/macros/s/AKfycbwTs23x2rA6TJ4cXAduWv74QY1a77a2APb8DMc3kz-smGQ0ME-BRhS9SRDxn72E_bnT/exec',
-      desember: 'https://script.google.com/macros/s/AKfycbwtNMLet2bgEhiIT1dAntx7rpkrAS5K1n96F9Vajqv1g-DiZGrm10OVinOOUZdFT3LsvQ/exec'
+      desember: 'https://script.google.com/macros/s/AKfycbwtNMLet2bgEhiIT1dAntx7rpkrAS5K1n96F9Vajqv1g-DiZGrm10OVinOOUZdFT3LsvQ/exec',
+      // <-- Added Januari 2026
+      januari: 'https://script.google.com/macros/s/AKfycbwqbuY0pvu99iHECTiDkk3k5dScMiBm_KTbyZG8VL-ABZ4pLFJiMHizr1ziSjNJh4Y9/exec'
     };
 
     const bulanLabel = {
@@ -202,7 +201,8 @@
       september: "SEPTEMBER 2025",
       oktober: "OKTOBER 2025",
       november: "NOVEMBER 2025",
-      desember: "DESEMBER 2025"
+      desember: "DESEMBER 2025",
+      januari: "JANUARI 2026" // <-- Added Label
     };
 
     const chartColors = {
@@ -224,6 +224,7 @@
 
     // pilih bulan awal
     const monthMap = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+    // logic auto-detect: if today is Januari, it picks 'januari' from map
     let currentBulan = monthMap[now.getMonth()] || 'mei';
     if (!API_MAP[currentBulan]) currentBulan = 'mei';
     let currentApi = API_MAP[currentBulan];
@@ -274,7 +275,6 @@
           globalData.sumberPerCabang = globalData.sumberPerCabang || {};
           globalData.sumberTabel = globalData.sumberTabel || [];
 
-          // NOTE: removed automatic removal of PEKALONGAN for November.
           // Keep JOGJA removal for Oktober only if still desired:
           if (currentBulan === 'oktober') {
             globalData.branches = globalData.branches.filter(b => b.cabang !== 'JOGJA');
