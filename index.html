@@ -62,7 +62,7 @@
   <main class="container mx-auto px-4 py-6 max-w-7xl">
     <header class="mb-6 text-center">
       <h1 class="text-3xl font-extrabold mb-2">Analisis All Cabang</h1>
-      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">JANUARI 2026</span></p>
+      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">MARET 2026</span></p>
 
       <div class="flex flex-wrap justify-center items-center gap-3 mb-3">
         <label class="font-bold text-lg" for="bulanPicker">Pilih Bulan:</label>
@@ -75,8 +75,10 @@
           <option value="september">September 2025</option>
           <option value="oktober">Oktober 2025</option>
           <option value="november">November 2025</option>
+          <option value="desember">Desember 2025</option>
           <option value="januari">Januari 2026</option>
-          <option value="februari" selected>Februari 2026</option>
+          <option value="februari">Februari 2026</option>
+          <option value="maret" selected>Maret 2026</option>
         </select>
       </div>
 
@@ -188,9 +190,9 @@
       oktober: 'https://script.google.com/macros/s/AKfycbzMjq1OdGnQA8DevTAG7U2aGXkvYUKH-8o1dczTuWIaXn3W6NuXzsakapevzgk5My4LnA/exec',
       november: 'https://script.google.com/macros/s/AKfycbwTs23x2rA6TJ4cXAduWv74QY1a77a2APb8DMc3kz-smGQ0ME-BRhS9SRDxn72E_bnT/exec',
       desember: 'https://script.google.com/macros/s/AKfycbwtNMLet2bgEhiIT1dAntx7rpkrAS5K1n96F9Vajqv1g-DiZGrm10OVinOOUZdFT3LsvQ/exec',
-      // <-- Added Januari 2026
       januari: 'https://script.google.com/macros/s/AKfycbxX6zkneMRRoHhewnV5ndXpVXQ40APOfzxWCFG8Uw78LMg2Ga-i4KdcjkHxejaflHTW/exec',
-      februari: 'https://script.google.com/macros/s/AKfycbxb0KBD-uOCzMWJ0n_gncXp6DVzgszyIsfg1W90LqdDzykp4N81ADAR8EWB6gOQSfFT/exec' // New URL
+      februari: 'https://script.google.com/macros/s/AKfycbxb0KBD-uOCzMWJ0n_gncXp6DVzgszyIsfg1W90LqdDzykp4N81ADAR8EWB6gOQSfFT/exec',
+      maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec' // <-- Added Maret 2026
     };
 
     const bulanLabel = {
@@ -204,7 +206,8 @@
       november: "NOVEMBER 2025",
       desember: "DESEMBER 2025",
       januari: "JANUARI 2026",
-      februari: "FEBRUARI 2026"// <-- Added Label
+      februari: "FEBRUARI 2026",
+      maret: "MARET 2026" // <-- Added Label
     };
 
     const chartColors = {
@@ -226,7 +229,7 @@
 
     // pilih bulan awal
     const monthMap = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
-    // logic auto-detect: if today is Januari, it picks 'januari' from map
+    // logic auto-detect: if today is Maret, it picks 'maret' from map
     let currentBulan = monthMap[now.getMonth()] || 'mei';
     if (!API_MAP[currentBulan]) currentBulan = 'mei';
     let currentApi = API_MAP[currentBulan];
@@ -606,5 +609,3 @@
   </script>
 </body>
 </html>
-
-
