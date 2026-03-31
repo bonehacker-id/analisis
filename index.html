@@ -62,12 +62,12 @@
   <main class="container mx-auto px-4 py-6 max-w-7xl">
     <header class="mb-6 text-center">
       <h1 class="text-3xl font-extrabold mb-2">Analisis All Cabang</h1>
-      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">MARET 2026</span></p>
+      <p class="text-lg font-semibold mb-3">BONE HACKER <span id="bulanHeader">MEMUAT...</span></p>
 
       <div class="flex flex-wrap justify-center items-center gap-3 mb-3">
         <label class="font-bold text-lg" for="bulanPicker">Pilih Bulan:</label>
         <select id="bulanPicker" class="dropdown">
-          <option value="april">April 2025</option>
+          <option value="april25">April 2025</option>
           <option value="mei">Mei 2025</option>
           <option value="juni">Juni 2025</option>
           <option value="juli">Juli 2025</option>
@@ -78,7 +78,8 @@
           <option value="desember">Desember 2025</option>
           <option value="januari">Januari 2026</option>
           <option value="februari">Februari 2026</option>
-          <option value="maret" selected>Maret 2026</option>
+          <option value="maret">Maret 2026</option>
+          <option value="april26">April 2026</option>
         </select>
       </div>
 
@@ -181,7 +182,7 @@
   <script>
     // ---------- Config ----------
     const API_MAP = {
-      april: 'https://script.google.com/macros/s/AKfycby6jW-vmVgRKlBlW-gBKLfnE4FLfDkM-jxzG4kgs1mgL7IJlwlFIX0j7hNomihzaQH2jg/exec',
+      april25: 'https://script.google.com/macros/s/AKfycby6jW-vmVgRKlBlW-gBKLfnE4FLfDkM-jxzG4kgs1mgL7IJlwlFIX0j7hNomihzaQH2jg/exec',
       mei:   'https://script.google.com/macros/s/AKfycbx5tHgTXzn0A1uxdjCYMLpb79DuURMTsNPXqPd0tLn4DG3UbtlygovWEFq73k2AdAuP/exec',
       juni:  'https://script.google.com/macros/s/AKfycbxzZWtyyfcQY3tFOyZ9fxhx6j81Kfdh7QjJvoXZCA0k9MPgOldmgSvqP_GZPvccmHPJ/exec',
       juli:  'https://script.google.com/macros/s/AKfycbzxi0ObtvJVuLJoSQwMrGHCWpnZeyPpwLD5fk8k9CCNJyCqS2m007l0mzgaDn9P3ilW/exec',
@@ -192,11 +193,12 @@
       desember: 'https://script.google.com/macros/s/AKfycbwtNMLet2bgEhiIT1dAntx7rpkrAS5K1n96F9Vajqv1g-DiZGrm10OVinOOUZdFT3LsvQ/exec',
       januari: 'https://script.google.com/macros/s/AKfycbxX6zkneMRRoHhewnV5ndXpVXQ40APOfzxWCFG8Uw78LMg2Ga-i4KdcjkHxejaflHTW/exec',
       februari: 'https://script.google.com/macros/s/AKfycbxb0KBD-uOCzMWJ0n_gncXp6DVzgszyIsfg1W90LqdDzykp4N81ADAR8EWB6gOQSfFT/exec',
-      maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec' // <-- Added Maret 2026
+      maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec',
+      april26: 'https://script.google.com/macros/s/AKfycbykJgM3oEmWMcmh2POywtJlAl_X0tJvOz_aCp9X1lgrykNuZCSKtOxKgsFWGLjhgClS/exec'
     };
 
     const bulanLabel = {
-      april: "APRIL 2025",
+      april25: "APRIL 2025",
       mei: "MEI 2025",
       juni: "JUNI 2025",
       juli: "JULI 2025",
@@ -207,7 +209,8 @@
       desember: "DESEMBER 2025",
       januari: "JANUARI 2026",
       februari: "FEBRUARI 2026",
-      maret: "MARET 2026" // <-- Added Label
+      maret: "MARET 2026",
+      april26: "APRIL 2026"
     };
 
     const chartColors = {
@@ -222,25 +225,33 @@
     const bulanHeader = document.getElementById('bulanHeader');
     const todayDateEl = document.getElementById('todayDate');
 
-    // tanggal
+    // Date initialization
     const now = new Date();
     const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' };
     todayDateEl.textContent = 'Tanggal: ' + now.toLocaleDateString('id-ID', options);
 
-    // pilih bulan awal
-    const monthMap = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
-    // logic auto-detect: if today is Maret, it picks 'maret' from map
-    let currentBulan = monthMap[now.getMonth()] || 'mei';
-    if (!API_MAP[currentBulan]) currentBulan = 'mei';
+    // --- AUTO-CHOOSE CURRENT MONTH LOGIC ---
+    const monthNames = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+    const currentYear = now.getFullYear();
+    const currentMonthIdx = now.getMonth();
+    let detectedKey = monthNames[currentMonthIdx];
+
+    // Handle the "April" duplicate key logic
+    if (detectedKey === 'april') {
+      detectedKey = (currentYear === 2025) ? 'april25' : 'april26';
+    }
+
+    // Set fallback to 'april26' if the current real-world month isn't in the API_MAP yet
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'april26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
       bulanPicker.value = currentBulan;
-      bulanHeader.textContent = bulanLabel[currentBulan] || bulanHeader.textContent;
+      bulanHeader.textContent = bulanLabel[currentBulan];
       bulanPicker.addEventListener('change', () => {
         currentBulan = bulanPicker.value;
         currentApi = API_MAP[currentBulan] || currentApi;
-        bulanHeader.textContent = bulanLabel[currentBulan] || bulanHeader.textContent;
+        bulanHeader.textContent = bulanLabel[currentBulan];
         loadData();
       });
     }
@@ -272,22 +283,14 @@
         .then(data => {
           hideLoading();
           globalData = data || {};
-          // safety defaults
-          globalData.branches = globalData.branches || [];
-          globalData.cabangList = globalData.cabangList || [];
+          
+          globalData.branches = (globalData.branches || []).filter(b => b.cabang !== 'BATANG');
+          globalData.cabangList = (globalData.cabangList || []).filter(c => c !== 'BATANG');
           globalData.sumberLabels = globalData.sumberLabels || [];
           globalData.sumberList = globalData.sumberList || [];
           globalData.sumberPerCabang = globalData.sumberPerCabang || {};
           globalData.sumberTabel = globalData.sumberTabel || [];
 
-          // Keep JOGJA removal for Oktober only if still desired:
-          if (currentBulan === 'oktober') {
-            globalData.branches = globalData.branches.filter(b => b.cabang !== 'JOGJA');
-            globalData.cabangList = globalData.cabangList.filter(c => c !== 'JOGJA');
-            if (globalData.sumberPerCabang && globalData.sumberPerCabang.JOGJA) delete globalData.sumberPerCabang.JOGJA;
-          }
-
-          // Rekalkulasi sumber total (semua cabang)
           if (globalData.sumberLabels.length > 0) {
             const recalculated = [];
             for (let i = 0; i < globalData.sumberLabels.length; i++) {
@@ -301,38 +304,27 @@
             globalData.sumberList = recalculated;
           }
 
-          // update summary metrics
-          try {
-            if (data.total) {
-              document.getElementById('totalPasien').textContent = data.total.jumlahPasien ?? '-';
-              document.getElementById('pasienBaru').textContent = data.total.pasienBaru ?? '-';
-              document.getElementById('pasienLama').textContent = data.total.pasienLama ?? '-';
-              document.getElementById('rataRata').textContent = Math.round(data.total.rataRataPerHari ?? 0);
-              document.getElementById('persenBaru').textContent = 'Pasien Baru: ' + ((data.total.persenBaru ?? 0) * 100).toFixed(1) + '%';
-              document.getElementById('persenLama').textContent = 'Pasien Lama: ' + ((data.total.persenLama ?? 0) * 100).toFixed(1) + '%';
-            } else {
-              document.getElementById('totalPasien').textContent = '-';
-              document.getElementById('pasienBaru').textContent = '-';
-              document.getElementById('pasienLama').textContent = '-';
-              document.getElementById('rataRata').textContent = '-';
-            }
-          } catch(e){ console.warn('Error updating totals', e); }
+          if (data.total) {
+            document.getElementById('totalPasien').textContent = data.total.jumlahPasien ?? '-';
+            document.getElementById('pasienBaru').textContent = data.total.pasienBaru ?? '-';
+            document.getElementById('pasienLama').textContent = data.total.pasienLama ?? '-';
+            document.getElementById('rataRata').textContent = Math.round(data.total.rataRataPerHari ?? 0);
+            document.getElementById('persenBaru').textContent = 'Pasien Baru: ' + ((data.total.persenBaru ?? 0) * 100).toFixed(1) + '%';
+            document.getElementById('persenLama').textContent = 'Pasien Lama: ' + ((data.total.persenLama ?? 0) * 100).toFixed(1) + '%';
+          }
 
-          // populate tables & dropdowns
           populateTable('tableBranch', globalData.branches);
           populateTableSumber('tableSumber', globalData.sumberTabel, globalData.cabangList);
           setupSumberDropdowns(globalData);
 
-          // setup chart cabang control & initial draw
           const chartCabangDropdown = document.getElementById('chartCabangDropdown');
           chartCabangDropdown.onchange = () => updateChartCabang(chartCabangDropdown.value);
           updateChartCabang(chartCabangDropdown.value || 'total');
 
-          // sorting
           addTableSorting('tableBranch', false);
           addTableSorting('tableSumber', false);
         })
-        .catch(err => { hideLoading(); console.error('LoadData error:', err); alert('Gagal memuat data. Periksa koneksi atau API.'); });
+        .catch(err => { hideLoading(); alert('Gagal memuat data.'); });
     }
 
     function populateTable(tableId, rows){
@@ -357,7 +349,6 @@
       const theadRow = table.querySelector('thead tr');
       const tbody = table.querySelector('tbody');
 
-      // header: Sumber + cabang + Total
       let headerHtml = '<th>Sumber</th>';
       cabangList.forEach(cabang => {
         const display = (cabang && cabang.length) ? (cabang.charAt(0) + cabang.slice(1).toLowerCase()) : cabang;
@@ -366,9 +357,7 @@
       headerHtml += `<th data-sort="number" class="sortable">Total</th>`;
       theadRow.innerHTML = headerHtml;
 
-      // rows
       tbody.innerHTML = (sumberTabel || []).map((row, idx) => {
-        // calculate total for this sumber across cabangList
         let sum = 0;
         const cells = (cabangList || []).map(c => {
           const val = Number(row[c] || 0);
@@ -385,7 +374,6 @@
       }).join('');
     }
 
-    // Setup dropdowns for sumber chart AND trigger initial draw AFTER populate
     function setupSumberDropdowns(data){
       const ddCabang = document.getElementById('chartSumberDropdown');
       const ddJenis = document.getElementById('chartSumberJenisDropdown');
@@ -396,7 +384,7 @@
 
       (data.cabangList || []).forEach(c => {
         const opt = document.createElement('option');
-        opt.value = c; // API uses UPPERCASE cabang names (we assume)
+        opt.value = c;
         opt.textContent = c.charAt(0) + c.slice(1).toLowerCase();
         ddCabang.appendChild(opt);
       });
@@ -409,24 +397,16 @@
       });
 
       ddCabang.onchange = () => {
-        if (ddCabang.value === 'all') {
-          ddJenis.disabled = false;
-        } else {
-          ddJenis.disabled = true;
-          ddJenis.value = 'all';
-        }
+        ddJenis.disabled = (ddCabang.value !== 'all');
+        if (ddCabang.value !== 'all') ddJenis.value = 'all';
         updateChartSumber(ddCabang.value, ddJenis.value);
       };
 
       ddJenis.onchange = () => {
-        if (ddJenis.value !== 'all') {
-          ddCabang.value = 'all';
-          ddJenis.disabled = false;
-        }
+        if (ddJenis.value !== 'all') ddCabang.value = 'all';
         updateChartSumber(ddCabang.value, ddJenis.value);
       };
 
-      // <-- trigger chart AFTER dropdown terisi
       updateChartSumber('all','all');
     }
 
@@ -448,7 +428,7 @@
 
     function updateChartCabang(type='total'){
       if (!globalData) return;
-      if (chartCabang) { chartCabang.destroy(); chartCabang = null; }
+      if (chartCabang) chartCabang.destroy();
 
       const data = globalData.branches || [];
       let sorted = [], dataset = {}, label = '';
@@ -465,10 +445,6 @@
         sorted = [...data].sort((a,b) => (b.pasienLama||0) - (a.pasienLama||0));
         label = 'Pasien Lama';
         dataset = { label, data: sorted.map(b=>b.pasienLama||0), backgroundColor:'rgba(37,99,235,0.85)', borderColor:'rgba(37,99,235,1)', borderWidth:1 };
-      } else {
-        sorted = [...data];
-        label = 'Jumlah Pasien';
-        dataset = { label, data: sorted.map(b=>b.jumlahPasien||0), backgroundColor:'rgba(17,24,39,0.85)', borderColor:'rgba(17,24,39,1)', borderWidth:1 };
       }
 
       const ctx = document.getElementById('chartCabang').getContext('2d');
@@ -490,7 +466,7 @@
 
     function updateChartSumber(cabang='all', sumber='all'){
       if (!globalData) return;
-      if (chartSumber) { chartSumber.destroy(); chartSumber = null; }
+      if (chartSumber) chartSumber.destroy();
 
       let labels = [], dataArr = [], bg = [], type='doughnut', datasetLabel='Sumber Informasi';
 
@@ -501,7 +477,7 @@
         type = 'doughnut';
       } else if (cabang !== 'all' && sumber === 'all') {
         labels = globalData.sumberLabels || [];
-        const arr = globalData.sumberPerCabang[cabang] || globalData.sumberPerCabang[cabang.toUpperCase()] || [];
+        const arr = globalData.sumberPerCabang[cabang] || [];
         dataArr = (arr || []).map(n => Number(n) || 0);
         bg = sumberColorArr.slice(0, labels.length);
         type = 'doughnut';
@@ -517,11 +493,6 @@
         bg = labels.map(() => sumberColorArr[idx] || '#777');
         type = 'bar';
         datasetLabel = globalData.sumberLabels[idx] || sumber;
-      } else {
-        labels = globalData.sumberLabels || [];
-        dataArr = globalData.sumberList || [];
-        bg = sumberColorArr.slice(0, labels.length);
-        type = 'doughnut';
       }
 
       const ctx = document.getElementById('chartSumber').getContext('2d');
@@ -543,68 +514,42 @@
                 }
                 return value;
               }
-            },
-            tooltip:{ callbacks:{ label: function(ctx){
-              if (type === 'doughnut') {
-                const sum = ctx.dataset.data.reduce((a,b)=>a+b,0);
-                const pct = sum ? ((ctx.parsed / sum) * 100).toFixed(1) + '%' : '0%';
-                return `${ctx.label}: ${ctx.parsed} (${pct})`;
-              } else {
-                return `${ctx.dataset.label}: ${ctx.parsed.y}`;
-              }
-            } } }
-          },
-          scales: type==='bar' ? { x:{ grid:{ color:'rgba(96,165,250,0.08)' } }, y:{ beginAtZero:true, grid:{ color:'rgba(96,165,250,0.08)' } } } : {}
+            }
+          }
         },
         plugins:[ChartDataLabels]
       });
-
-      // update sumber summary (chips)
       updateSumberSummary();
     }
 
     function addTableSorting(tableId, allowSortFirstCol=false){
       const table = document.getElementById(tableId);
       if (!table) return;
-      const headers = table.querySelectorAll('th');
-      headers.forEach((th, i) => {
+      table.querySelectorAll('th').forEach((th, i) => {
         if (i === 0 && !allowSortFirstCol) return;
         if (!th.classList.contains('sortable')) th.classList.add('sortable');
-        const newTh = th.cloneNode(true);
-        th.parentNode.replaceChild(newTh, th);
-        newTh.addEventListener('click', () => {
+        th.addEventListener('click', () => {
           const tbody = table.querySelector('tbody');
           const rows = Array.from(tbody.querySelectorAll('tr'));
-          const asc = !newTh.classList.contains('sorted-asc');
+          const asc = !th.classList.contains('sorted-asc');
           table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
-          newTh.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+          th.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
           rows.sort((a,b) => {
             let aText = (a.children[i].textContent || '').trim();
             let bText = (b.children[i].textContent || '').trim();
-            const isNumber = newTh.getAttribute('data-sort') === 'number';
+            const isNumber = th.getAttribute('data-sort') === 'number';
             if (isNumber) {
               aText = parseFloat(aText.replace('%','')) || 0;
               bText = parseFloat(bText.replace('%','')) || 0;
               return asc ? aText - bText : bText - aText;
-            } else {
-              return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
             }
+            return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
           });
           rows.forEach(r => tbody.appendChild(r));
         });
       });
     }
 
-    window.addEventListener('resize', () => {
-      const chartType = document.getElementById('chartCabangDropdown').value || 'total';
-      updateChartCabang(chartType);
-      const sDropdown = document.getElementById('chartSumberDropdown');
-      const jDropdown = document.getElementById('chartSumberJenisDropdown');
-      if (sDropdown && jDropdown) updateChartSumber(sDropdown.value, jDropdown.value);
-    });
-
-    // initial load
-    document.getElementById('bulanHeader').textContent = bulanLabel[currentBulan] || document.getElementById('bulanHeader').textContent;
     loadData();
   </script>
 </body>
