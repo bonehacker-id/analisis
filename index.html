@@ -80,6 +80,7 @@
           <option value="februari">Februari 2026</option>
           <option value="maret">Maret 2026</option>
           <option value="april26">April 2026</option>
+          <option value="mei26">Mei 2026</option>
         </select>
       </div>
 
@@ -194,7 +195,8 @@
       januari: 'https://script.google.com/macros/s/AKfycbxX6zkneMRRoHhewnV5ndXpVXQ40APOfzxWCFG8Uw78LMg2Ga-i4KdcjkHxejaflHTW/exec',
       februari: 'https://script.google.com/macros/s/AKfycbxb0KBD-uOCzMWJ0n_gncXp6DVzgszyIsfg1W90LqdDzykp4N81ADAR8EWB6gOQSfFT/exec',
       maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec',
-      april26: 'https://script.google.com/macros/s/AKfycbykJgM3oEmWMcmh2POywtJlAl_X0tJvOz_aCp9X1lgrykNuZCSKtOxKgsFWGLjhgClS/exec'
+      april26: 'https://script.google.com/macros/s/AKfycbykJgM3oEmWMcmh2POywtJlAl_X0tJvOz_aCp9X1lgrykNuZCSKtOxKgsFWGLjhgClS/exec',
+      mei26: 'https://script.google.com/macros/s/AKfycbw_W-7sJ7lHlMypuSb9xF8084LNUR8xbOLu6lGx-4tbvwFtPGcrOQY-cfSPihbAuQ8/exec'
     };
 
     const bulanLabel = {
@@ -210,7 +212,8 @@
       januari: "JANUARI 2026",
       februari: "FEBRUARI 2026",
       maret: "MARET 2026",
-      april26: "APRIL 2026"
+      april26: "APRIL 2026",
+      mei26: "MEI 2026"
     };
 
     const chartColors = {
@@ -236,13 +239,15 @@
     const currentMonthIdx = now.getMonth();
     let detectedKey = monthNames[currentMonthIdx];
 
-    // Handle the "April" duplicate key logic
+    // Logika pemilihan tahun (2025 vs 2026)
     if (detectedKey === 'april') {
       detectedKey = (currentYear === 2025) ? 'april25' : 'april26';
+    } else if (detectedKey === 'mei') {
+      detectedKey = (currentYear === 2025) ? 'mei' : 'mei26';
     }
 
-    // Set fallback to 'april26' if the current real-world month isn't in the API_MAP yet
-    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'april26'; 
+    // Set fallback ke 'mei26' jika bulan saat ini tidak terdaftar di API_MAP
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'mei26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
