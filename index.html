@@ -81,6 +81,7 @@
           <option value="maret">Maret 2026</option>
           <option value="april26">April 2026</option>
           <option value="mei26">Mei 2026</option>
+          <option value="juni26">Juni 2026</option>
         </select>
       </div>
 
@@ -196,7 +197,8 @@
       februari: 'https://script.google.com/macros/s/AKfycbxb0KBD-uOCzMWJ0n_gncXp6DVzgszyIsfg1W90LqdDzykp4N81ADAR8EWB6gOQSfFT/exec',
       maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec',
       april26: 'https://script.google.com/macros/s/AKfycbykJgM3oEmWMcmh2POywtJlAl_X0tJvOz_aCp9X1lgrykNuZCSKtOxKgsFWGLjhgClS/exec',
-      mei26: 'https://script.google.com/macros/s/AKfycbw_W-7sJ7lHlMypuSb9xF8084LNUR8xbOLu6lGx-4tbvwFtPGcrOQY-cfSPihbAuQ8/exec'
+      mei26: 'https://script.google.com/macros/s/AKfycbw_W-7sJ7lHlMypuSb9xF8084LNUR8xbOLu6lGx-4tbvwFtPGcrOQY-cfSPihbAuQ8/exec',
+      juni26: 'https://script.google.com/macros/s/AKfycbyvh-6YlVBOCIYOaRga1lRdjOjVHMFFEo4AZS5oCn1q6d0IaKEiYv5DdP-rji7uqcDV/exec' // <-- PASTE LINK SCRIPT JUNI DISINI
     };
 
     const bulanLabel = {
@@ -213,7 +215,8 @@
       februari: "FEBRUARI 2026",
       maret: "MARET 2026",
       april26: "APRIL 2026",
-      mei26: "MEI 2026"
+      mei26: "MEI 2026",
+      juni26: "JUNI 2026"
     };
 
     const chartColors = {
@@ -244,10 +247,12 @@
       detectedKey = (currentYear === 2025) ? 'april25' : 'april26';
     } else if (detectedKey === 'mei') {
       detectedKey = (currentYear === 2025) ? 'mei' : 'mei26';
+    } else if (detectedKey === 'juni') {
+      detectedKey = (currentYear === 2025) ? 'juni' : 'juni26';
     }
 
-    // Set fallback ke 'mei26' jika bulan saat ini tidak terdaftar di API_MAP
-    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'mei26'; 
+    // Set fallback ke 'juni26'
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'juni26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
@@ -289,8 +294,8 @@
           hideLoading();
           globalData = data || {};
           
-          globalData.branches = (globalData.branches || []).filter(b => b.cabang !== 'BATANG');
-          globalData.cabangList = (globalData.cabangList || []).filter(c => c !== 'BATANG');
+          globalData.branches = (globalData.branches || []).filter(b => b.cabang !== 'BATANG' && b.cabang !== 'PEKALONGAN');
+          globalData.cabangList = (globalData.cabangList || []).filter(c => c !== 'BATANG' && c !== 'PEKALONGAN');
           globalData.sumberLabels = globalData.sumberLabels || [];
           globalData.sumberList = globalData.sumberList || [];
           globalData.sumberPerCabang = globalData.sumberPerCabang || {};
@@ -329,7 +334,7 @@
           addTableSorting('tableBranch', false);
           addTableSorting('tableSumber', false);
         })
-        .catch(err => { hideLoading(); alert('Gagal memuat data.'); });
+        .catch(err => { hideLoading(); alert('Gagal memuat data. Pastikan URL Web App sudah benar di API_MAP.'); });
     }
 
     function populateTable(tableId, rows){
