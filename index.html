@@ -82,6 +82,7 @@
           <option value="april26">April 2026</option>
           <option value="mei26">Mei 2026</option>
           <option value="juni26">Juni 2026</option>
+          <option value="juli26">Juli 2026</option>
         </select>
       </div>
 
@@ -198,7 +199,8 @@
       maret: 'https://script.google.com/macros/s/AKfycbzFtodKjbY2Fn9PbERqg41AZoRzh6witqIvXa-WNSP8Fmhr0webvyT8MtG5XCnp7yhL/exec',
       april26: 'https://script.google.com/macros/s/AKfycbykJgM3oEmWMcmh2POywtJlAl_X0tJvOz_aCp9X1lgrykNuZCSKtOxKgsFWGLjhgClS/exec',
       mei26: 'https://script.google.com/macros/s/AKfycbw_W-7sJ7lHlMypuSb9xF8084LNUR8xbOLu6lGx-4tbvwFtPGcrOQY-cfSPihbAuQ8/exec',
-      juni26: 'https://script.google.com/macros/s/AKfycbyvh-6YlVBOCIYOaRga1lRdjOjVHMFFEo4AZS5oCn1q6d0IaKEiYv5DdP-rji7uqcDV/exec' // <-- PASTE LINK SCRIPT JUNI DISINI (Atau link App Script yang baru di-deploy)
+      juni26: 'https://script.google.com/macros/s/AKfycbyvh-6YlVBOCIYOaRga1lRdjOjVHMFFEo4AZS5oCn1q6d0IaKEiYv5DdP-rji7uqcDV/exec',
+      juli26: 'https://script.google.com/macros/s/AKfycbzqVLlXeKsHLJPVWA4_lUHWn8FV83R8uEWI7eTvhkJ47mmRQ6LlBldUOZgS4khAXuv9/exec' // <-- LINK SCRIPT JULI 2026 DITAMBAHKAN
     };
 
     const bulanLabel = {
@@ -216,7 +218,8 @@
       maret: "MARET 2026",
       april26: "APRIL 2026",
       mei26: "MEI 2026",
-      juni26: "JUNI 2026"
+      juni26: "JUNI 2026",
+      juli26: "JULI 2026"
     };
 
     const chartColors = {
@@ -249,10 +252,12 @@
       detectedKey = (currentYear === 2025) ? 'mei' : 'mei26';
     } else if (detectedKey === 'juni') {
       detectedKey = (currentYear === 2025) ? 'juni' : 'juni26';
+    } else if (detectedKey === 'juli') {
+      detectedKey = (currentYear === 2025) ? 'juli' : 'juli26';
     }
 
-    // Set fallback ke 'juni26'
-    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'juni26'; 
+    // Set fallback ke 'juli26'
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'juli26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
