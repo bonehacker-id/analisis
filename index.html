@@ -84,6 +84,7 @@
           <option value="juni26">Juni 2026</option>
           <option value="juli26">Juli 2026</option>
           <option value="agustus26">Agustus 2026</option>
+          <option value="september26">September 2026</option>
         </select>
       </div>
 
@@ -202,7 +203,8 @@
       mei26: 'https://script.google.com/macros/s/AKfycbw_W-7sJ7lHlMypuSb9xF8084LNUR8xbOLu6lGx-4tbvwFtPGcrOQY-cfSPihbAuQ8/exec',
       juni26: 'https://script.google.com/macros/s/AKfycbyvh-6YlVBOCIYOaRga1lRdjOjVHMFFEo4AZS5oCn1q6d0IaKEiYv5DdP-rji7uqcDV/exec',
       juli26: 'https://script.google.com/macros/s/AKfycbzqVLlXeKsHLJPVWA4_lUHWn8FV83R8uEWI7eTvhkJ47mmRQ6LlBldUOZgS4khAXuv9/exec',
-      agustus26: 'https://script.google.com/macros/s/AKfycby1rSE0TTJEk7eyFXkxcqJWTjkiRdal_hCo1SZehOt0YBhlAVwv9-ibcM999l9VEmvB/exec' // <-- MASUKKAN URL WEB APP AGUSTUS 2026 DI SINI
+      agustus26: 'https://script.google.com/macros/s/AKfycby1rSE0TTJEk7eyFXkxcqJWTjkiRdal_hCo1SZehOt0YBhlAVwv9-ibcM999l9VEmvB/exec',
+      september26: 'https://script.google.com/macros/s/AKfycbwmTnZgg-qojF9mYvj89fexwX0aZ1M2Z_s34UxfbrIRs0B3AsOkIPTORKTFHoaSTCWgGg/exec' // <-- Masukkan URL Web App September 2026 jika berbeda
     };
 
     const bulanLabel = {
@@ -222,7 +224,8 @@
       mei26: "MEI 2026",
       juni26: "JUNI 2026",
       juli26: "JULI 2026",
-      agustus26: "AGUSTUS 2026"
+      agustus26: "AGUSTUS 2026",
+      september26: "SEPTEMBER 2026"
     };
 
     const chartColors = {
@@ -259,10 +262,12 @@
       detectedKey = (currentYear === 2025) ? 'juli' : 'juli26';
     } else if (detectedKey === 'agustus') {
       detectedKey = (currentYear === 2025) ? 'agustus' : 'agustus26';
+    } else if (detectedKey === 'september') {
+      detectedKey = (currentYear === 2025) ? 'september' : 'september26';
     }
 
-    // Set fallback ke 'agustus26'
-    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'agustus26'; 
+    // Set fallback ke 'september26'
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'september26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
