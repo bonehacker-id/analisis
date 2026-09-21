@@ -204,7 +204,7 @@
       juni26: 'https://script.google.com/macros/s/AKfycbyvh-6YlVBOCIYOaRga1lRdjOjVHMFFEo4AZS5oCn1q6d0IaKEiYv5DdP-rji7uqcDV/exec',
       juli26: 'https://script.google.com/macros/s/AKfycbzqVLlXeKsHLJPVWA4_lUHWn8FV83R8uEWI7eTvhkJ47mmRQ6LlBldUOZgS4khAXuv9/exec',
       agustus26: 'https://script.google.com/macros/s/AKfycby1rSE0TTJEk7eyFXkxcqJWTjkiRdal_hCo1SZehOt0YBhlAVwv9-ibcM999l9VEmvB/exec',
-      september26: 'https://script.google.com/macros/s/AKfycbwmTnZgg-qojF9mYvj89fexwX0aZ1M2Z_s34UxfbrIRs0B3AsOkIPTORKTFHoaSTCWgGg/exec' // <-- Masukkan URL Web App September 2026 jika berbeda
+      september26: 'https://script.google.com/macros/s/AKfycbwmTnZgg-qojF9mYvj89fexwX0aZ1M2Z_s34UxfbrIRs0B3AsOkIPTORKTFHoaSTCWgGg/exec' // Pastikan ini URL Web App yang sudah di-deploy untuk September 2026
     };
 
     const bulanLabel = {
@@ -251,7 +251,6 @@
     const currentMonthIdx = now.getMonth();
     let detectedKey = monthNames[currentMonthIdx];
 
-    // Logika pemilihan tahun
     if (detectedKey === 'april') {
       detectedKey = (currentYear === 2025) ? 'april25' : 'april26';
     } else if (detectedKey === 'mei') {
@@ -266,7 +265,6 @@
       detectedKey = (currentYear === 2025) ? 'september' : 'september26';
     }
 
-    // Set fallback ke 'september26'
     let currentBulan = API_MAP[detectedKey] ? detectedKey : 'september26'; 
     let currentApi = API_MAP[currentBulan];
 
