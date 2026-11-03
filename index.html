@@ -86,6 +86,7 @@
           <option value="agustus26">Agustus 2026</option>
           <option value="september26">September 2026</option>
           <option value="oktober26">Oktober 2026</option>
+          <option value="november26">November 2026</option>
         </select>
       </div>
 
@@ -206,7 +207,8 @@
       juli26: 'https://script.google.com/macros/s/AKfycbzqVLlXeKsHLJPVWA4_lUHWn8FV83R8uEWI7eTvhkJ47mmRQ6LlBldUOZgS4khAXuv9/exec',
       agustus26: 'https://script.google.com/macros/s/AKfycby1rSE0TTJEk7eyFXkxcqJWTjkiRdal_hCo1SZehOt0YBhlAVwv9-ibcM999l9VEmvB/exec',
       september26: 'https://script.google.com/macros/s/AKfycbwmTnZgg-qojF9mYvj89fexwX0aZ1M2Z_s34UxfbrIRs0B3AsOkIPTORKTFHoaSTCWgGg/exec',
-      oktober26: 'https://script.google.com/macros/s/AKfycbxGj-_0bC3cTEe97C0H_sDzgsNM6Rb8oIcUolJS-nihscTb70MEpOGGCCtWY-V218I2DA/exec'
+      oktober26: 'https://script.google.com/macros/s/AKfycbxGj-_0bC3cTEe97C0H_sDzgsNM6Rb8oIcUolJS-nihscTb70MEpOGGCCtWY-V218I2DA/exec',
+      november26: 'https://script.google.com/macros/s/AKfycbyQRrR9rp_7TXN15YPXYq_vfeJ-Qpy5anyfwRQW9HM2iPj7OtcCtgx30JN6MaED2Es/exec'
     };
 
     const bulanLabel = {
@@ -228,7 +230,8 @@
       juli26: "JULI 2026",
       agustus26: "AGUSTUS 2026",
       september26: "SEPTEMBER 2026",
-      oktober26: "OKTOBER 2026"
+      oktober26: "OKTOBER 2026",
+      november26: "NOVEMBER 2026"
     };
 
     const chartColors = {
@@ -268,10 +271,11 @@
       detectedKey = (currentYear === 2025) ? 'september' : 'september26';
     } else if (detectedKey === 'oktober') {
       detectedKey = (currentYear === 2025) ? 'oktober' : 'oktober26';
+    } else if (detectedKey === 'november') {
+      detectedKey = (currentYear === 2025) ? 'november' : 'november26';
     }
 
-    // Default bulan otomatis mengarah ke Oktober 2026 saat tidak ada kecocokan tahun/waktu
-    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'oktober26'; 
+    let currentBulan = API_MAP[detectedKey] ? detectedKey : 'november26'; 
     let currentApi = API_MAP[currentBulan];
 
     if (bulanPicker) {
